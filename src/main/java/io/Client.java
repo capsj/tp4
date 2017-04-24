@@ -16,8 +16,13 @@ public class Client extends Thread{
     public void run(){
         while(true){
             try {
+                Thread.sleep(1000);
                 System.out.println("Client " + id + " entered");
-                shop.getHaircut(this);
+                if(shop.getHaircut(id)){
+                    Thread.sleep(25000);
+                } else{
+                    Thread.sleep(4000);
+                }
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

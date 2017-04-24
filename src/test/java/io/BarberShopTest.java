@@ -10,14 +10,15 @@ import main.java.io.Client;
  */
 public class BarberShopTest {
 
-    public static void main(String[] args) {
-        int clients = 3;
+    public static void main(String[] args) throws InterruptedException {
+        int clients = 10;
         int chairs = 4;
         Barber barber = new Barber();
         BarberShop barberShop = new BarberShop(chairs, barber);
-
+        barber.start();
         for (int i = 0; i < clients; i++) {
-            new Client(i, barberShop).run();
+            new Client(i, barberShop).start();
+            Thread.sleep(1000);
         }
     }
 }

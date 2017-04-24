@@ -15,25 +15,33 @@ public class Barber extends Thread{
 
     public void run(){
         while (true){
-
+            try{
+                System.out.println("Waiting client");
+                checkClients();
+                Thread.sleep(4000);
+                toSleep();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
-    public void cutHair(Client client) throws InterruptedException {
+    public synchronized void cutHair(int clientId) throws InterruptedException {
         occupied = true;
-        System.out.println("Cutting hair of client " + client.id);
-        long timer = (long) (Math.random()*100);
+        System.out.println("Cutting hair of client " + clientId);
+        long timer = (long) (Math.random()*5000);
         Thread.sleep(timer);
-        sleep(timer);
-        checkClients();
+        occupied = false;
+        System.out.println("DONE CLIENT " + clientId);
     }
 
-    private void checkClients() {
+    private synchronized void checkClients() {
         notifyAll();
     }
 
-    private void toSleep(){
+    private synchronized void toSleep() throws InterruptedException {
         asleep = true;
-        System.out.println("Barber is sleeping");
+        System.out.println("Barber is SLEEPING");
+        wait();
     }
 
     public void wakeUp() {

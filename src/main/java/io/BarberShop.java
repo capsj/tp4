@@ -7,35 +7,36 @@ package main.java.io;
 public class BarberShop {
     private int chairs;
     private int occupiedChairs;
-//    private boolean barberChair;
     private Barber barber;
 
     public BarberShop(int chairs, Barber barber){
         this.chairs = chairs;
-//        barberChair = true;
         occupiedChairs = 0;
         this.barber = barber;
     }
 
-    public void getHaircut(Client client) throws InterruptedException {
+    public synchronized boolean getHaircut(int clientId) throws InterruptedException {
         if (occupiedChairs == chairs) {
             System.out.println("All chairs occupied, client leaves");
+            return false;
         } else {
             if (barber.isOccupied()) {
                 occupiedChairs++;
-                Thread.currentThread().wait();
-                System.out.println("Client " + client.id + " is waiting");
+                while (barber.isOccupied()) {
+                    System.out.println("Client " + clientId + " is waiting");
+                    wait();
+                }
+                occupiedChairs--;
+                barber.cutHair(clientId);
+
             } else if (barber.isAsleep()) {
+                System.out.println("Client " + clientId + " woke the barber up");
                 barber.wakeUp();
-                barber.cutHair(client);
+                barber.cutHair(clientId);
             } else {
-                barber.cutHair(client);
+                barber.cutHair(clientId);
             }
+            return true;
         }
-    }
-
-
-    public boolean isEmpty(){
-        return occupiedChairs == 0;
     }
 }
